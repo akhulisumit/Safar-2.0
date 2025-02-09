@@ -41,38 +41,52 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    const prompt = `Generate a personalized travel itinerary for ${travelers} travelers to ${destination} for ${duration} days. The budget per person is ${budget} INR. Preferences include: ${
-      interests || "None"
-    }. Special requirements: ${
-      specialRequirements || "None"
-    }. Also do mention about the proper transportation give the results in HTML Format with proper line gaps`;
+    // OpenWeather API
+    const weatherApiKey = "cbfae166ed8241a12093367b15d4b392"; // Replace with your OpenWeather API key
+    const weatherApiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${destination}&units=metric&appid=${weatherApiKey}`;
+
+    let weatherInfo = "";
+
+    try {
+      const weatherResponse = await fetch(weatherApiUrl);
+      if (!weatherResponse.ok) throw new Error("Weather data not found.");
+      const weatherData = await weatherResponse.json();
+
+      const temp = weatherData.main.temp;
+      const condition = weatherData.weather[0].description;
+      const humidity = weatherData.main.humidity;
+      const windSpeed = weatherData.wind.speed;
+
+      weatherInfo = `The current weather in ${destination} is ${temp}°C with ${condition}. 
+      Humidity is ${humidity}%, and the wind speed is ${windSpeed} m/s.`;
+
+      console.log("Weather Data:", weatherData);
+    } catch (error) {
+      console.error("Error fetching weather:", error);
+      weatherInfo = "Weather data unavailable.";
+    }
+
+    // Generate AI Travel Itinerary (Gemini API)
+    const prompt = `Generate a personalized travel itinerary for ${travelers} travelers to ${destination} for ${duration} days. 
+    The budget per person is $${budget} INR. Preferences include: ${interests || "None"}. 
+    Special requirements: ${specialRequirements || "None"}. Also mention proper transportation. 
+    Weather forecast: ${weatherInfo}. Format the results in HTML with proper line gaps.`;
+
     console.log("Prompt:", prompt);
 
-    const apiKey = "AIzaSyC56g30u8bjTqn4cHd5P1eolfe5iwHMc7E"; // Replace with a secure method to retrieve API key
+    const apiKey = "AIzaSyC56g30u8bjTqn4cHd5P1eolfe5iwHMc7E"; // Replace with your Gemini API key
     const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
 
     try {
       const response = await fetch(apiUrl, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          contents: [
-            {
-              parts: [{ text: prompt }],
-            },
-          ],
-        }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] }),
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(
-          `API request failed with status ${response.status}: ${
-            errorData.error?.message || response.statusText
-          }`
-        );
+        throw new Error(`API request failed: ${errorData.error?.message || response.statusText}`);
       }
 
       const data = await response.json();
@@ -80,17 +94,13 @@ document.addEventListener("DOMContentLoaded", () => {
       loadingMessage.style.display = "none";
       travelPlanContainer.classList.add("visible");
 
-      if (
-        data.candidates &&
-        data.candidates.length > 0 &&
-        data.candidates[0].content.parts.length > 0
-      ) {
-        const sanitizedOutput =
-          data.candidates[0]?.content?.parts[0]?.text || "";
-        travelPlanContainer.innerHTML = `<h3>Your AI-Generated Travel Plan</h3><div class='travel-plan-content'>${sanitizedOutput}</div>`;
+      if (data.candidates && data.candidates.length > 0 && data.candidates[0].content.parts.length > 0) {
+        const sanitizedOutput = data.candidates[0]?.content?.parts[0]?.text || "";
+        travelPlanContainer.innerHTML = `<h3>Your AI-Generated Travel Plan</h3>
+          <p><strong>Weather Info:</strong> ${weatherInfo}</p>
+          <div class='travel-plan-content'>${sanitizedOutput}</div>`;
       } else {
-        travelPlanContainer.innerHTML =
-          "<p>Sorry, we couldn't generate a travel plan at this time. Please try again.</p>";
+        travelPlanContainer.innerHTML = "<p>Sorry, we couldn't generate a travel plan at this time. Please try again.</p>";
       }
     } catch (error) {
       console.error("Error fetching travel plan:", error);
