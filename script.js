@@ -5,6 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const interestButtons = document.querySelectorAll(".interest-button");
   const selectedInterestsInput = document.getElementById("selected-interests");
 
+  // Handle interest button selection
   interestButtons.forEach((button) => {
     button.addEventListener("click", () => {
       button.classList.toggle("active");
@@ -42,7 +43,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // OpenWeather API
-    const weatherApiKey = "cbfae166ed8241a12093367b15d4b392"; // Replace with your OpenWeather API key
+    const weatherApiKey = "cbfae166ed8241a12093367b15d4b392"; // Replace with your actual API key
     const weatherApiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${destination}&units=metric&appid=${weatherApiKey}`;
 
     let weatherInfo = "";
@@ -70,11 +71,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const prompt = `Generate a personalized travel itinerary for ${travelers} travelers to ${destination} for ${duration} days. 
     The budget per person is $${budget} INR. Preferences include: ${interests || "None"}. 
     Special requirements: ${specialRequirements || "None"}. Also mention proper transportation. 
-    Weather forecast: ${weatherInfo}. Format the results in HTML with proper line gaps.`;
+    Weather forecast: ${weatherInfo}. Format the results in HTML for dark mode with proper line gaps.`;
 
     console.log("Prompt:", prompt);
 
-    const apiKey = "AIzaSyC56g30u8bjTqn4cHd5P1eolfe5iwHMc7E"; // Replace with your Gemini API key
+    const apiKey = "AIzaSyC56g30u8bjTqn4cHd5P1eolfe5iwHMc7E"; // Replace with your actual Gemini API key
     const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
 
     try {
@@ -90,16 +91,27 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       const data = await response.json();
-      console.log("Response data:", data);
+      console.log("Full API Response:", data);
+
       loadingMessage.style.display = "none";
       travelPlanContainer.classList.add("visible");
 
-      if (data.candidates && data.candidates.length > 0 && data.candidates[0].content.parts.length > 0) {
-        const sanitizedOutput = data.candidates[0]?.content?.parts[0]?.text || "";
-        travelPlanContainer.innerHTML = `<h3>Your AI-Generated Travel Plan</h3>
+      // Ensure the response contains the expected structure
+      if (
+        data.candidates &&
+        data.candidates.length > 0 &&
+        data.candidates[0].content &&
+        data.candidates[0].content.parts &&
+        data.candidates[0].content.parts.length > 0
+      ) {
+        const sanitizedOutput = data.candidates[0].content.parts[0].text || "";
+        travelPlanContainer.innerHTML = `
           <p><strong>Weather Info:</strong> ${weatherInfo}</p>
+          <br>
+          <h3>Your AI-Generated Travel Plan</h3>
           <div class='travel-plan-content'>${sanitizedOutput}</div>`;
       } else {
+        console.error("Unexpected API response structure:", data);
         travelPlanContainer.innerHTML = "<p>Sorry, we couldn't generate a travel plan at this time. Please try again.</p>";
       }
     } catch (error) {

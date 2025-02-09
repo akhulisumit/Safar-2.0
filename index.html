@@ -54,13 +54,13 @@
         <form class="travel-form">
             <div class="form-grid">
                 <div class="form-group">
-                    <label for="destination">Destination</label>
-                    <input type="text" id="destination" name="destination" placeholder="Where would you like to go?" required>
-                </div>
-
-                <div class="form-group">
                     <label for="travelers">Number of Travelers</label>
                     <input type="number" id="travelers" name="travelers" min="1" placeholder="How many people?" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="destination">Destination</label>
+                    <input type="text" id="destination" name="destination" placeholder="Where would you like to go?" required>
                 </div>
 
                 <div class="form-group">
@@ -95,6 +95,9 @@
 
         <div id="loading-message" class="loading-message">Generating your travel plan...</div>
         <div id="travel-plan-container" class="travel-plan-container"></div>
+
+        <br>
+        <br>
 
         <section class="section-title">
             <h2>What Our Travelers Say</h2>
