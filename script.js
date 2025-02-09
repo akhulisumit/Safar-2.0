@@ -28,7 +28,7 @@ document.addEventListener("DOMContentLoaded", () => {
     travelPlanContainer.classList.remove("visible");
 
     const destination = document.getElementById("destination").value.trim();
-    const travelers = document.getElementById("travelers").value.trim();
+    const from = document.getElementById("from").value.trim();
     const duration = document.getElementById("duration").value.trim();
     const budget = document.getElementById("budget").value.trim();
     const interests = selectedInterestsInput.value.trim();
@@ -36,7 +36,7 @@ document.addEventListener("DOMContentLoaded", () => {
       .getElementById("special-requirements")
       .value.trim();
 
-    if (!destination || !travelers || !duration || !budget) {
+    if (!destination || !from || !duration || !budget) {
       alert("Please fill in all required fields.");
       loadingMessage.style.display = "none";
       return;
@@ -68,10 +68,11 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // Generate AI Travel Itinerary (Gemini API)
-    const prompt = `Generate a personalized travel itinerary for ${travelers} travelers to ${destination} for ${duration} days. 
+    const prompt = `Generate a personalized travel itinerary for a travelers travelling ${from} to ${destination} for ${duration} days. 
     The budget per person is $${budget} INR. Preferences include: ${interests || "None"}. 
     Special requirements: ${specialRequirements || "None"}. Also mention proper transportation. 
     Weather forecast: ${weatherInfo}. Format the results in HTML for dark mode with proper line gaps.`;
+    console.log(prompt);
 
     console.log("Prompt:", prompt);
 
