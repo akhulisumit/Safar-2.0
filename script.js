@@ -22,9 +22,8 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function displayWeather(weatherData) {
-    const h3 = `Current Weather at ${destination}`;
     weatherCard.innerHTML = `
-      <h3>${h3}</h3>
+      <h3>Current Weather at Destination</h3>
       <div class="weather-info">
         <div class="weather-detail">
           <span>Temperature</span>
@@ -142,7 +141,7 @@ document.addEventListener("DOMContentLoaded", () => {
         data.candidates[0].content.parts.length > 0
       ) {
         const sanitizedOutput = data.candidates[0].content.parts[0].text || "";
-        travelPlanContainer.innerHTML = `<div class='travel-plan-content'>${sanitizedOutput}</div>`;
+        travelPlanContainer.innerHTML = `<h1>Your Personalized Travel Plan is here...</h1><p<div class='travel-plan-content'>${sanitizedOutput}</div>`;
       } else {
         console.error("Unexpected API response structure:", data);
         travelPlanContainer.innerHTML =
