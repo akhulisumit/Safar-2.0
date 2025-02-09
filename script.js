@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const interestButtons = document.querySelectorAll(".interest-button");
   const selectedInterestsInput = document.getElementById("selected-interests");
 
-  interestButtons.forEach(button => {
+  interestButtons.forEach((button) => {
     button.addEventListener("click", () => {
       button.classList.toggle("active");
       updateSelectedInterests();
@@ -14,8 +14,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function updateSelectedInterests() {
     const selected = Array.from(interestButtons)
-      .filter(btn => btn.classList.contains("active"))
-      .map(btn => btn.dataset.interest);
+      .filter((btn) => btn.classList.contains("active"))
+      .map((btn) => btn.dataset.interest);
     selectedInterestsInput.value = selected.join(", ");
   }
 
@@ -31,7 +31,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const duration = document.getElementById("duration").value.trim();
     const budget = document.getElementById("budget").value.trim();
     const interests = selectedInterestsInput.value.trim();
-    const specialRequirements = document.getElementById("special-requirements").value.trim();
+    const specialRequirements = document
+      .getElementById("special-requirements")
+      .value.trim();
 
     if (!destination || !travelers || !duration || !budget) {
       alert("Please fill in all required fields.");
@@ -39,7 +41,11 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    const prompt = `Generate a personalized travel itinerary for ${travelers} travelers to ${destination} for ${duration} days. The budget per person is ${budget} USD. Preferences include: ${interests || 'None'}. Special requirements: ${specialRequirements || 'None'}. give the results in HTML Format`;
+    const prompt = `Generate a personalized travel itinerary for ${travelers} travelers to ${destination} for ${duration} days. The budget per person is ${budget} INR. Preferences include: ${
+      interests || "None"
+    }. Special requirements: ${
+      specialRequirements || "None"
+    }. Also do mention about the proper transportation give the results in HTML Format with proper line gaps`;
     console.log("Prompt:", prompt);
 
     const apiKey = "AIzaSyC56g30u8bjTqn4cHd5P1eolfe5iwHMc7E"; // Replace with a secure method to retrieve API key
@@ -49,18 +55,24 @@ document.addEventListener("DOMContentLoaded", () => {
       const response = await fetch(apiUrl, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          "contents": [{
-            "parts": [{ "text": prompt }]
-          }]
-        })
+          contents: [
+            {
+              parts: [{ text: prompt }],
+            },
+          ],
+        }),
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(`API request failed with status ${response.status}: ${errorData.error?.message || response.statusText}`);
+        throw new Error(
+          `API request failed with status ${response.status}: ${
+            errorData.error?.message || response.statusText
+          }`
+        );
       }
 
       const data = await response.json();
@@ -68,11 +80,17 @@ document.addEventListener("DOMContentLoaded", () => {
       loadingMessage.style.display = "none";
       travelPlanContainer.classList.add("visible");
 
-      if (data.candidates && data.candidates.length > 0 && data.candidates[0].content.parts.length > 0) {
-        const sanitizedOutput = data.candidates[0]?.content?.parts[0]?.text || "";
+      if (
+        data.candidates &&
+        data.candidates.length > 0 &&
+        data.candidates[0].content.parts.length > 0
+      ) {
+        const sanitizedOutput =
+          data.candidates[0]?.content?.parts[0]?.text || "";
         travelPlanContainer.innerHTML = `<h3>Your AI-Generated Travel Plan</h3><div class='travel-plan-content'>${sanitizedOutput}</div>`;
       } else {
-        travelPlanContainer.innerHTML = "<p>Sorry, we couldn't generate a travel plan at this time. Please try again.</p>";
+        travelPlanContainer.innerHTML =
+          "<p>Sorry, we couldn't generate a travel plan at this time. Please try again.</p>";
       }
     } catch (error) {
       console.error("Error fetching travel plan:", error);
