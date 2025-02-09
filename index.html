@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Travel Planner - Your Smart Travel Companion</title>
-    <link rel="stylesheet" href="style.css"></head>
+    <link rel="stylesheet" href="style.css">
+</head>
 <body>
     <header class="header">
         <h1>AI Travel Planner</h1>
@@ -54,7 +55,7 @@
         <form class="travel-form">
             <div class="form-grid">
                 <div class="form-group">
-                    <label for="travelers">From</label>
+                    <label for="from">From</label>
                     <input type="text" id="from" name="from" placeholder="From where are you going?" required>
                 </div>
 
@@ -93,11 +94,15 @@
             <button type="submit">Generate My Travel Plan</button>
         </form>
 
+        <div class="weather-section">
+            <div id="weather-card" class="weather-card">
+                <!-- Weather info will be populated here -->
+            </div>
+        </div>
+
         <div id="loading-message" class="loading-message">Generating your travel plan...</div>
         <div id="travel-plan-container" class="travel-plan-container"></div>
 
-        <br>
-        <br>
 
         <section class="section-title">
             <h2>What Our Travelers Say</h2>
