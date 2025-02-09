@@ -250,3 +250,38 @@ button[type="submit"]:hover {
     padding: 20px;
   }
 }
+
+.error {
+  border-color: red;
+}
+
+.error-message {
+  color: red;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+
+.success-message {
+  color: green;
+  text-align: center;
+  padding: 1rem;
+  margin-top: 1rem;
+  background-color: #f0fff4;
+  border-radius: 0.375rem;
+}
+
+.loading-message {
+  display: none;
+  text-align: center;
+  font-size: 18px;
+  color: #2962ff;
+  margin-top: 20px;
+}
+
+.travel-plan-container {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  margin-top: 20px;
+}
