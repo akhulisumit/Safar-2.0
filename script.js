@@ -105,7 +105,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }. 
     Special requirements: ${
       specialRequirements || "None"
-    }.Mention proper transportation.  
+    }.Mention proper transportation. 
+      Also please write a generalized blog on the destination. 
       Format the results in HTML for dark mode with proper line gaps.`;
 
     const apiKey = "AIzaSyC56g30u8bjTqn4cHd5P1eolfe5iwHMc7E";
