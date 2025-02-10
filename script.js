@@ -1,3 +1,5 @@
+
+
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.querySelector(".travel-form");
   const loadingMessage = document.getElementById("loading-message");
@@ -21,9 +23,9 @@ document.addEventListener("DOMContentLoaded", () => {
     selectedInterestsInput.value = selected.join(", ");
   }
 
-  function displayWeather(weatherData) {
+  function displayWeather(weatherData, destination) {
     weatherCard.innerHTML = `
-      <h3>Current Weather at Destination</h3>
+      <h3>Current Weather in ${destination}</h3>
       <div class="weather-info">
         <div class="weather-detail">
           <span>Temperature</span>
@@ -46,11 +48,12 @@ document.addEventListener("DOMContentLoaded", () => {
     weatherCard.style.display = "block";
     weatherCard.classList.add("visible");
   }
+  
 
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
 
-    loadingMessage.style.display = "block";
+    loadingMessage.style.display = "flex";
     travelPlanContainer.innerHTML = "";
     travelPlanContainer.classList.remove("visible");
     weatherCard.style.display = "none";
@@ -83,7 +86,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const weatherData = await weatherResponse.json();
 
       // Display weather card
-      displayWeather(weatherData);
+      displayWeather(weatherData, destination);
 
       weatherInfo = `The current weather in ${destination} is ${Math.round(
         weatherData.main.temp
