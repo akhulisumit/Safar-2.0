@@ -355,7 +355,7 @@ button[type="submit"]:hover {
   left: 50%;
   width: 30%; /* Set a fixed width */
   height: 40%; /* Set a fixed height */
-  background: rgba(0, 0, 0, 0.906); /* Semi-transparent background */
+  background: rgb(17, 14, 14); /* Semi-transparent background */
   display: none;
   flex-direction: column;
   justify-content: center;
