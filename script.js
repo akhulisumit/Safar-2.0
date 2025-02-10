@@ -7,6 +7,10 @@ document.addEventListener("DOMContentLoaded", () => {
   const interestButtons = document.querySelectorAll(".interest-button");
   const selectedInterestsInput = document.getElementById("selected-interests");
   const weatherCard = document.getElementById("weather-card");
+  const imageContainer = document.getElementById("destination-image"); // Create this in HTML
+
+  const UNSPLASH_ACCESS_KEY = "VDe53wmJz2fr6bUtiu5UgDbgNNGrJNgn2SMdBAfGsWw"; // Replace with your Unsplash API key
+
 
   // Handle interest button selection
   interestButtons.forEach((button) => {
@@ -48,6 +52,26 @@ document.addEventListener("DOMContentLoaded", () => {
     weatherCard.style.display = "block";
     weatherCard.classList.add("visible");
   }
+
+  async function fetchDestinationImage(destination) {
+    const unsplashUrl = `https://api.unsplash.com/search/photos?query=${destination}&client_id=${UNSPLASH_ACCESS_KEY}&per_page=1&orientation=landscape`;
+
+    try {
+      const response = await fetch(unsplashUrl);
+      if (!response.ok) throw new Error("Failed to fetch image");
+      const data = await response.json();
+
+      if (data.results.length > 0) {
+        const imageUrl = data.results[0].urls.regular;
+        imageContainer.innerHTML = `<img src="${imageUrl}" alt="${destination}" class="destination-img">`;
+      } else {
+        imageContainer.innerHTML = `<p>No image available for ${destination}</p>`;
+      }
+    } catch (error) {
+      console.error("Error fetching destination image:", error);
+      imageContainer.innerHTML = `<p>Image not available</p>`;
+    }
+  }
   
 
   form.addEventListener("submit", async (event) => {
@@ -58,6 +82,8 @@ document.addEventListener("DOMContentLoaded", () => {
     travelPlanContainer.classList.remove("visible");
     weatherCard.style.display = "none";
     weatherCard.classList.remove("visible");
+    imageContainer.innerHTML = ""; // Clear previous image
+
 
     const destination = document.getElementById("destination").value.trim();
     const from = document.getElementById("from").value.trim();
@@ -73,6 +99,8 @@ document.addEventListener("DOMContentLoaded", () => {
       loadingMessage.style.display = "none";
       return;
     }
+
+    await fetchDestinationImage(destination); // Fetch the image
 
     // OpenWeather API
     const weatherApiKey = "cbfae166ed8241a12093367b15d4b392";
