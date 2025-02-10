@@ -1,5 +1,3 @@
-
-
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.querySelector(".travel-form");
   const loadingMessage = document.getElementById("loading-message");
@@ -7,9 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const interestButtons = document.querySelectorAll(".interest-button");
   const selectedInterestsInput = document.getElementById("selected-interests");
   const weatherCard = document.getElementById("weather-card");
-  const imageContainer = document.getElementById("destination-image"); // Create this in HTML
-
-  const UNSPLASH_ACCESS_KEY = "VDe53wmJz2fr6bUtiu5UgDbgNNGrJNgn2SMdBAfGsWw"; // Replace with your Unsplash API key
+  const imageContainer = document.getElementById("destination-image");
 
 
   // Handle interest button selection
@@ -31,44 +27,39 @@ document.addEventListener("DOMContentLoaded", () => {
     weatherCard.innerHTML = `
       <h3>Current Weather in ${destination}</h3>
       <div class="weather-info">
-        <div class="weather-detail">
-          <span>Temperature</span>
-          ${Math.round(weatherData.main.temp)}°C
-        </div>
-        <div class="weather-detail">
-          <span>Condition</span>
-          ${weatherData.weather[0].description}
-        </div>
-        <div class="weather-detail">
-          <span>Humidity</span>
-          ${weatherData.main.humidity}%
-        </div>
-        <div class="weather-detail">
-          <span>Wind Speed</span>
-          ${weatherData.wind.speed} m/s
-        </div>
+        <div class="weather-detail"><span>Condition:</span> ${weatherData.weather[0].description}</div>
+        <div class="weather-detail"><span>Temperature:</span> ${Math.round(weatherData.main.temp)}°C</div>
+        <div class="weather-detail"><span>Humidity:</span> ${weatherData.main.humidity}%</div>
+        <div class="weather-detail"><span>Wind Speed:</span> ${weatherData.wind.speed} m/s</div>
       </div>
     `;
     weatherCard.style.display = "block";
     weatherCard.classList.add("visible");
   }
+  
+  
 
-  async function fetchDestinationImage(destination) {
-    const unsplashUrl = `https://api.unsplash.com/search/photos?query=${destination}&client_id=${UNSPLASH_ACCESS_KEY}&per_page=1&orientation=landscape`;
-
+  async function fetchDestinationImages(destination) {
+    const UNSPLASH_ACCESS_KEY = "VDe53wmJz2fr6bUtiu5UgDbgNNGrJNgn2SMdBAfGsWw"; // Use your actual Unsplash Access Key
+    const unsplashUrl = `https://api.unsplash.com/search/photos?query=${destination}&client_id=${UNSPLASH_ACCESS_KEY}&per_page=12&orientation=landscape`; // Increase `per_page` to 10
+  
     try {
       const response = await fetch(unsplashUrl);
-      if (!response.ok) throw new Error("Failed to fetch image");
+      if (!response.ok) throw new Error("Failed to fetch images");
       const data = await response.json();
-
+  
       if (data.results.length > 0) {
-        const imageUrl = data.results[0].urls.regular;
-        imageContainer.innerHTML = `<img src="${imageUrl}" alt="${destination}" class="destination-img">`;
+        imageContainer.innerHTML = data.results
+          .map(
+            (img) =>
+              `<img src="${img.urls.regular}" alt="${destination}" class="destination-img">`
+          )
+          .join(""); // Display multiple images
       } else {
-        imageContainer.innerHTML = `<p>No image available for ${destination}</p>`;
+        imageContainer.innerHTML = `<p>No images available for ${destination}</p>`;
       }
     } catch (error) {
-      console.error("Error fetching destination image:", error);
+      console.error("Error fetching destination images:", error);
       imageContainer.innerHTML = `<p>Image not available</p>`;
     }
   }
@@ -82,17 +73,14 @@ document.addEventListener("DOMContentLoaded", () => {
     travelPlanContainer.classList.remove("visible");
     weatherCard.style.display = "none";
     weatherCard.classList.remove("visible");
-    imageContainer.innerHTML = ""; // Clear previous image
-
+    imageContainer.innerHTML = ""; // Clear previous images
 
     const destination = document.getElementById("destination").value.trim();
     const from = document.getElementById("from").value.trim();
     const duration = document.getElementById("duration").value.trim();
     const budget = document.getElementById("budget").value.trim();
     const interests = selectedInterestsInput.value.trim();
-    const specialRequirements = document
-      .getElementById("special-requirements")
-      .value.trim();
+    const specialRequirements = document.getElementById("special-requirements").value.trim();
 
     if (!destination || !from || !duration || !budget) {
       alert("Please fill in all required fields.");
@@ -100,13 +88,11 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    await fetchDestinationImage(destination); // Fetch the image
+    await fetchDestinationImages(destination); // Fetch multiple images
 
     // OpenWeather API
     const weatherApiKey = "cbfae166ed8241a12093367b15d4b392";
     const weatherApiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${destination}&units=metric&appid=${weatherApiKey}`;
-
-    let weatherInfo = "";
 
     try {
       const weatherResponse = await fetch(weatherApiUrl);
@@ -116,16 +102,9 @@ document.addEventListener("DOMContentLoaded", () => {
       // Display weather card
       displayWeather(weatherData, destination);
 
-      weatherInfo = `The current weather in ${destination} is ${Math.round(
-        weatherData.main.temp
-      )}°C with ${weatherData.weather[0].description}. Humidity is ${
-        weatherData.main.humidity
-      }%, and the wind speed is ${weatherData.wind.speed} m/s.`;
-
       console.log("Weather Data:", weatherData);
     } catch (error) {
       console.error("Error fetching weather:", error);
-      weatherInfo = "Weather data unavailable.";
       weatherCard.style.display = "none";
     }
 
@@ -144,17 +123,8 @@ Generate a structured travel itinerary for a trip from **${from}** to **${destin
 - **Must-Try Food**  
 - **Packing & Safety Tips**  
 
-### **Styling Guidelines**:  
-- Background: #121212 (Dark Mode)  
-- Primary Text: #E0E0E0 (Light Gray)  
-- Headings: #82B1FF (Light Blue)  
-- Borders/Highlights: #4F8CFF (Blue Accent)  
-
-Keep it well-structured with proper gaps and return the response in **HTML format** .
+Return the response in **HTML format**.
 `;
-
-
-
 
     const apiKey = "AIzaSyC56g30u8bjTqn4cHd5P1eolfe5iwHMc7E";
     const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
@@ -168,11 +138,7 @@ Keep it well-structured with proper gaps and return the response in **HTML forma
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(
-          `API request failed: ${
-            errorData.error?.message || response.statusText
-          }`
-        );
+        throw new Error(`API request failed: ${errorData.error?.message || response.statusText}`);
       }
 
       const data = await response.json();
@@ -181,21 +147,13 @@ Keep it well-structured with proper gaps and return the response in **HTML forma
       loadingMessage.style.display = "none";
       travelPlanContainer.classList.add("visible");
 
-      if (
-        data.candidates &&
-        data.candidates.length > 0 &&
-        data.candidates[0].content &&
-        data.candidates[0].content.parts &&
-        data.candidates[0].content.parts.length > 0
-      ) {
+      if (data.candidates?.length > 0 && data.candidates[0].content?.parts?.length > 0) {
         let sanitizedOutput = data.candidates[0].content.parts[0].text || "";
         sanitizedOutput = sanitizedOutput.replace(/```html|```/g, "").trim();
 
-        travelPlanContainer.innerHTML = `<h1>Your Personalized Travel Plan is here...</h1><p<div class='travel-plan-content'>${sanitizedOutput}</div>`;
+        travelPlanContainer.innerHTML = `<div class='travel-plan-content'>${sanitizedOutput}</div>`;
       } else {
-        console.error("Unexpected API response structure:", data);
-        travelPlanContainer.innerHTML =
-          "<p>Sorry, we couldn't generate a travel plan at this time. Please try again.</p>";
+        travelPlanContainer.innerHTML = "<p>Sorry, we couldn't generate a travel plan at this time. Please try again.</p>";
       }
     } catch (error) {
       console.error("Error fetching travel plan:", error);
