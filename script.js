@@ -102,15 +102,31 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // Generate AI Travel Itinerary (Gemini API)
-    const prompt = `Generate a personalized travel itinerary for travelers travelling from ${from} to ${destination} for ${duration} days. 
-    The budget per person is ${budget} INR. Preferences include: ${
-      interests || "None"
-    }. 
-    Special requirements: ${
-      specialRequirements || "None"
-    }.Mention proper transportation. 
-      Also please write a generalized blog on the destination. 
-      Format the results in HTML for dark mode with proper line gaps.`;
+    const prompt = `
+Generate a structured travel itinerary for a trip from **${from}** to **${destination}** for **${duration} days**. 
+
+- **Budget**: ${budget} INR per person  
+- **Preferences**: ${interests || "None"}  
+- **Special Requirements**: ${specialRequirements || "None"}  
+
+**Format (Use HTML with Dark Mode Styling)**:  
+- **Title**: "Travel Itinerary for ${destination}"  
+- **Day-wise Plan** (Morning, Afternoon, Evening)  
+- **Transportation & Stay Recommendations**  
+- **Must-Try Food**  
+- **Packing & Safety Tips**  
+
+### **Styling Guidelines**:  
+- Background: #121212 (Dark Mode)  
+- Primary Text: #E0E0E0 (Light Gray)  
+- Headings: #82B1FF (Light Blue)  
+- Borders/Highlights: #4F8CFF (Blue Accent)  
+
+Keep it well-structured with proper gaps and return the response in **HTML format** .
+`;
+
+
+
 
     const apiKey = "AIzaSyC56g30u8bjTqn4cHd5P1eolfe5iwHMc7E";
     const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
@@ -144,7 +160,9 @@ document.addEventListener("DOMContentLoaded", () => {
         data.candidates[0].content.parts &&
         data.candidates[0].content.parts.length > 0
       ) {
-        const sanitizedOutput = data.candidates[0].content.parts[0].text || "";
+        let sanitizedOutput = data.candidates[0].content.parts[0].text || "";
+        sanitizedOutput = sanitizedOutput.replace(/```html|```/g, "").trim();
+
         travelPlanContainer.innerHTML = `<h1>Your Personalized Travel Plan is here...</h1><p<div class='travel-plan-content'>${sanitizedOutput}</div>`;
       } else {
         console.error("Unexpected API response structure:", data);
