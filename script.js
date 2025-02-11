@@ -159,10 +159,16 @@ document.addEventListener("DOMContentLoaded", () => {
       loadingMessage.style.display = "none";
       return;
     }
-    
+
     await fetchWeather(destination);
     await generateTravelPlan(from, destination, duration, budget, interests, specialRequirements);
     await fetchDestinationImages(destination);
 
   });
 });
+
+window.whoMadeYou = function () {
+  console.log("%c🔥 I was created by HellO! 🚀", "color: green; font-size: 16px; font-weight: bold;");
+};
+
+
