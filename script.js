@@ -28,6 +28,17 @@ document.addEventListener("DOMContentLoaded", () => {
     selectedInterestsInput.value = selected.join(", ");
   }
 
+  //handling the loading page
+  function showLoading() {
+    loadingMessage.style.display = "flex"; // Show the loading screen
+    document.body.classList.add("no-scroll"); // Disable scrolling
+  }
+  
+  function hideLoading() {
+    loadingMessage.style.display = "none"; // Hide the loading screen
+    document.body.classList.remove("no-scroll"); // Enable scrolling again
+  }
+
   // ✅ Fetch & Display Weather Information
   async function fetchWeather(destination) {
     const weatherApiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${destination}&units=metric&appid=${WEATHER_API_KEY}`;
@@ -118,12 +129,12 @@ document.addEventListener("DOMContentLoaded", () => {
     } catch (error) {
       console.error("Error fetching travel plan:", error);
       travelPlanContainer.innerHTML = `<p>An error occurred: ${error.message}. Please try again later.</p>`;
-      loadingMessage.style.display = "none";
+      hideLoading();
     }
   }
 
   function displayTravelPlan(data) {
-    loadingMessage.style.display = "none";
+    hideLoading();
     travelPlanContainer.classList.add("visible");
 
     if (data.candidates?.length > 0 && data.candidates[0].content?.parts?.length > 0) {
@@ -140,7 +151,7 @@ document.addEventListener("DOMContentLoaded", () => {
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
 
-    loadingMessage.style.display = "flex";
+    showLoading();
     travelPlanContainer.innerHTML = "";
     travelPlanContainer.classList.remove("visible");
     weatherCard.style.display = "none";
@@ -156,7 +167,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (!destination || !from || !duration || !budget) {
       alert("Please fill in all required fields.");
-      loadingMessage.style.display = "none";
+      hideLoading();
       return;
     }
 

@@ -508,5 +508,12 @@ button[type="submit"]:hover {
   transform: scale(1.05); /* Slight zoom effect on hover */
 }
 
+/* Prevent background scrolling when loading is active */
+.no-scroll {
+  overflow: hidden;
+  height: 100vh;
+}
+
+
 
 
