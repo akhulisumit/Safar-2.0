@@ -171,4 +171,8 @@ window.whoMadeYou = function () {
   console.log("%c🔥 I was created by HellO! 🚀", "color: green; font-size: 16px; font-weight: bold;");
 };
 
+function whoMade(){
+  console.log("Sumit")
+}
+
 
