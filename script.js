@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // 🔑 API Keys (Move to environment variables for security)
   const UNSPLASH_ACCESS_KEY = "VDe53wmJz2fr6bUtiu5UgDbgNNGrJNgn2SMdBAfGsWw";
   const WEATHER_API_KEY = "cbfae166ed8241a12093367b15d4b392";
-  const GEMINI_API_KEY = "AIzaSyC56g30u8bjTqn4cHd5P1eolfe5iwHMc7E";
+  const GEMINI_API_KEY = "AIzaSyDw2gMVC65Ov3yTwZCH67GE30dR7hpPe6s";
 
   // ✅ Handle Interest Button Selection
   interestButtons.forEach((button) => {
@@ -92,46 +92,55 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // ✅ Generate AI-Based Travel Plan using Gemini API
-  async function generateTravelPlan(from, destination, duration, budget, interests, specialRequirements) {
-    const prompt = `
-      Generate a structured travel itinerary for a trip from **${from}** to **${destination}** for **${duration} days**. 
+  // ✅ Generate AI-Based Travel Plan using Gemini API
+async function generateTravelPlan(from, destination, duration, budget, interests, specialRequirements) {
+  const prompt = `
+    Generate a structured travel itinerary for a trip from **${from}** to **${destination}** for **${duration} days**. 
 
-      - **Budget**: ${budget} INR per person  
-      - **Preferences**: ${interests || "None"}  
-      - **Special Requirements**: ${specialRequirements || "None"}  
+    - **Budget**: ${budget} INR per person  
+    - **Preferences**: ${interests || "None"}  
+    - **Special Requirements**: ${specialRequirements || "None"}  
 
-      **Format (Use HTML with Dark Mode Styling)**:  
-      - **Title**: "Travel Itinerary for ${destination}"  
-      - **Day-wise Plan** (Morning, Afternoon, Evening)  
-      - **Transportation & Stay Recommendations**  
-      - **Must-Try Food**  
-      - **Packing & Safety Tips**  
+    **Format (Use HTML with Dark Mode Styling)**:  
+    - **Title**: "Travel Itinerary for ${destination}"  
+    - **Day-wise Plan** (Morning, Afternoon, Evening)  
+    - **Transportation & Stay Recommendations**  
+    - **Must-Try Food**  
+    - **Packing & Safety Tips**  
 
-      Return the response in **HTML format**.
-    `;
+    Return the response in **HTML format**.
+  `;
 
-    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+  // ✅ FIXED MODEL NAME (THIS IS THE ONLY REQUIRED CHANGE)
+  const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${GEMINI_API_KEY}`;
 
-    try {
-      const response = await fetch(apiUrl, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] }),
-      });
+  try {
+    const response = await fetch(apiUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        contents: [
+          {
+            parts: [{ text: prompt }]
+          }
+        ]
+      }),
+    });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(`API request failed: ${errorData.error?.message || response.statusText}`);
-      }
-
-      const data = await response.json();
-      displayTravelPlan(data);
-    } catch (error) {
-      console.error("Error fetching travel plan:", error);
-      travelPlanContainer.innerHTML = `<p>An error occurred: ${error.message}. Please try again later.</p>`;
-      hideLoading();
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error?.message || response.statusText);
     }
+
+    const data = await response.json();
+    displayTravelPlan(data);
+  } catch (error) {
+    console.error("Error fetching travel plan:", error);
+    travelPlanContainer.innerHTML = `<p>An error occurred: ${error.message}. Please try again later.</p>`;
+    hideLoading();
   }
+}
+
 
   function displayTravelPlan(data) {
     hideLoading();
